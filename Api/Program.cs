@@ -18,6 +18,7 @@ builder.Services.AddDbContext<ToDoContext>(options =>
 // 2. Registrar los Repositorios
 builder.Services.AddScoped<IRepository<UserEntity, UserId>, UserRepository>();
 builder.Services.AddScoped<RegisterUserUseCase>();
+builder.Services.AddScoped<GetByIdUserUseCase>();
 
 builder.Services.AddOpenApi();
 
@@ -39,10 +40,11 @@ app.MapPost("/users", async (UserRequest request, RegisterUserUseCase useCase) =
 });
 
 // El endpoint GET que servirá para esa URL
-app.MapGet("/users/{id}", async (Guid id, RegisterUserUseCase useCase) => 
+app.MapGet("/users/{id}", async (Guid id, GetByIdUserUseCase useCase) => 
 {
-    // Lógica para buscar y devolver el usuario...
-    return Results.Ok(new { Id = id});
+    var user = await useCase.Execute(id);
+    
+    return Results.Ok(user);
 });
 
 app.MapGet("/", () => "API ToDo Lista para pruebas").WithName("GetRoot");
