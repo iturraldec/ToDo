@@ -15,7 +15,7 @@ var connectionString = builder.Configuration.GetConnectionString("PostgresConnec
 builder.Services.AddDbContext<ToDoContext>(options =>
     options.UseNpgsql(connectionString));
 
-// 2. Registrar el Repositorio (Capa de Infraestructura)
+// 2. Registrar los Repositorios
 builder.Services.AddScoped<IRepository<UserEntity, UserId>, UserRepository>();
 builder.Services.AddScoped<RegisterUserUseCase>();
 
@@ -33,8 +33,16 @@ app.UseHttpsRedirection();
 // Endpoint para probar la inserción del primer usuario
 app.MapPost("/users", async (UserRequest request, RegisterUserUseCase useCase) =>
 {
-    await useCase.Execute(request);
-    return Results.Ok(new { message = "Usuario registrado exitosamente" });
+    var id = await useCase.Execute(request);
+    
+    return Results.Created($"/users/{id}", new { Id = id });
+});
+
+// El endpoint GET que servirá para esa URL
+app.MapGet("/users/{id}", async (Guid id, RegisterUserUseCase useCase) => 
+{
+    // Lógica para buscar y devolver el usuario...
+    return Results.Ok(new { Id = id});
 });
 
 app.MapGet("/", () => "API ToDo Lista para pruebas").WithName("GetRoot");
