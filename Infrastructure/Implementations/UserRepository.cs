@@ -37,23 +37,30 @@ public class UserRepository : IRepository<UserEntity, UserId>
   {
     var user = new User
     {
-        Id = UserId.CreateUnique().Value,
-        Name = entity.Name.Value,
-        Email = entity.Email.Value,
-        Role = (short) entity.Role
+      Id = UserId.CreateUnique().Value,
+      Name = entity.Name.Value,
+      Email = entity.Email.Value,
+      Role = (short) entity.Role
     };
     
     await _context.Users.AddAsync(user);
     await _context.SaveChangesAsync();
   }
-
-  /* public async Task UpdateAsync(User user)
+  public async Task UpdateAsync(UserEntity entity)
   {
-      _context.Users.Update(user);
-      await _context.SaveChangesAsync();
+    var existingModel = await _context.Users.FindAsync(entity.Id.Value);
+    
+    if (existingModel != null)
+    {
+        existingModel.Name = entity.Name.Value;
+        existingModel.Email = entity.Email.Value;
+        existingModel.Role = (short)entity.Role;
+
+        await _context.SaveChangesAsync();
+    }
   }
 
-  public async Task DeleteAsync(UserId id)
+  /*public async Task DeleteAsync(UserId id)
   {
       var user = await GetByIdAsync(id);
       if (user != null)

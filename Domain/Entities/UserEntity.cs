@@ -17,6 +17,12 @@ public class UserEntity
     Email = email;
     Role = role;
   }
+  public void UpdateInfo(UserName name, UserEmail email, Roles role)
+  {
+    Name = name;
+    Email = email;
+    Role = role;
+  }
   public bool IsAdmin() => Role == Roles.Admin;
   public bool IsOperator() => Role == Roles.Operator;
 }
