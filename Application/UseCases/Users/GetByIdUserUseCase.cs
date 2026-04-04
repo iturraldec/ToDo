@@ -13,7 +13,7 @@ public class GetByIdUserUseCase
   {
     var entity = await _repository.GetByIdAsync(UserId.FromGuid(id));
  
-    if (entity == null) return null;
+    if (entity == null) throw new Exception("User not found");
 
     return new UserResponse(
                 entity.Name.Value,

@@ -20,6 +20,7 @@ builder.Services.AddScoped<IRepository<UserEntity, UserId>, UserRepository>();
 builder.Services.AddScoped<RegisterUserUseCase>();
 builder.Services.AddScoped<GetByIdUserUseCase>();
 builder.Services.AddScoped<UpdateUserUseCase>();
+builder.Services.AddScoped<DeleteUserUseCase>();
 
 builder.Services.AddOpenApi();
 
@@ -56,6 +57,15 @@ app.MapPut("/users", async (UserRequest request, UpdateUserUseCase useCase) =>
     return Results.NoContent();
 });
 
+//
+app.MapDelete("/users/{id}", async (Guid id, DeleteUserUseCase useCase) =>
+{
+    await useCase.Execute(id);
+    
+    return Results.NoContent();
+});
+
+//
 app.MapGet("/", () => "API ToDo Lista para pruebas").WithName("GetRoot");
 
 app.Run();

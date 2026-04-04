@@ -59,14 +59,19 @@ public class UserRepository : IRepository<UserEntity, UserId>
         await _context.SaveChangesAsync();
     }
   }
-
-  /*public async Task DeleteAsync(UserId id)
+  public async Task DeleteAsync(UserId id)
   {
-      var user = await GetByIdAsync(id);
-      if (user != null)
-      {
-          _context.Users.Remove(user);
-          await _context.SaveChangesAsync();
-      }
-  } */
+    var entity = await GetByIdAsync(id);
+
+    var user = new User
+    {
+      Id = entity.Id.Value,
+      Name = entity.Name.Value,
+      Email = entity.Email.Value,
+      Role = (short)entity.Role
+    };
+
+    _context.Users.Remove(user);
+    await _context.SaveChangesAsync();
+  }
 }
