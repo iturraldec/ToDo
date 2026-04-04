@@ -1,4 +1,3 @@
-#pragma warning disable IDE0005
 using Domain.Enums;
 using Domain.ValueObjects;
 
@@ -12,6 +11,7 @@ public class UserEntity
   public UserEntity(UserId id, UserName name, UserEmail email, Roles role)
   {
     if (!Enum.IsDefined(typeof(Roles), role)) throw new ArgumentException("Rol no válido.");
+    
     Id = id;
     Name = name;
     Email = email;

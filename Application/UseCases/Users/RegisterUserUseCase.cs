@@ -10,16 +10,16 @@ public class RegisterUserUseCase
 {
   private readonly IRepository<UserEntity, UserId> _repository;
   public RegisterUserUseCase(IRepository<UserEntity, UserId> repository) => _repository = repository;
-  public async Task Execute(UserRequest request)
+  public async Task<Guid> Execute(UserRequest request)
   {
     // 1. Validar unicidad (Regla de aplicación)
     /* var userEmail = new UserEmail(email);
     var existing = await _repository.GetByEmailAsync(userEmail);
     if (existing != null) throw new Exception("El usuario ya existe.");
  */
-    // 2. Generar Identidad y Entidad
+    UserId id = UserId.CreateUnique();
     var user = new UserEntity(
-                    UserId.CreateUnique(), 
+                    id, 
                     new UserName(request.Name),
                     new UserEmail(request.Email),
                     request.Role
@@ -27,5 +27,7 @@ public class RegisterUserUseCase
 
     // 3. Persistir
     await _repository.AddAsync(user);
+
+    return id.Value;
   }
 }

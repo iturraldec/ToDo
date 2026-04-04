@@ -1,7 +1,8 @@
-#pragma warning disable IDE0005
 using Microsoft.EntityFrameworkCore;
+using Application.DTOs;
 using Domain.Entities;
 using Domain.Interfaces;
+using Domain.Enums;
 using Domain.ValueObjects;
 using Infrastructure.Models;
 
@@ -13,11 +14,19 @@ public class UserRepository : IRepository<UserEntity, UserId>
   {
       _context = context;
   }
-  /* public async Task<User?> GetByIdAsync(UserId id)
+  public async Task<UserEntity?> GetByIdAsync(UserId id)
   {
-      // EF Core usará el Value Converter que definimos en el DbContext
-      return await _context.Users.FindAsync(id);
-  } */
+    var model = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id.Value);
+
+    if (model == null) return null;
+
+    return new UserEntity(
+                    UserId.FromGuid(model.Id),
+                    new UserName(model.Name),
+                    new UserEmail(model.Email),
+                    (Roles) model.Role
+                );
+  }
 
   /* public async Task<IEnumerable<User>> GetAllAsync()
   {
