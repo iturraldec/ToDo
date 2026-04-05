@@ -28,6 +28,19 @@ public class UserRepository : IRepository<UserEntity, UserId>
                 );
   }
 
+  public async Task<UserEntity?> GetByEmailAsync(UserEmail email)
+  {
+    var model = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == email.Value);
+
+    if (model == null) return null;
+
+    return new UserEntity(
+                    UserId.FromGuid(model.Id),
+                    new UserName(model.Name),
+                    new UserEmail(model.Email),
+                    (Roles) model.Role
+                );
+  }
   public async Task<IReadOnlyList<UserEntity>> GetAllAsync()
   {
 

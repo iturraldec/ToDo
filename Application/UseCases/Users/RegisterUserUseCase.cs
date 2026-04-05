@@ -1,5 +1,6 @@
 #pragma warning disable IDE0005
 using Application.DTOs;
+using Domain.Exceptions;
 using Domain.Enums;
 using Domain.Entities;
 using Domain.ValueObjects;
@@ -12,22 +13,26 @@ public class RegisterUserUseCase
   public RegisterUserUseCase(IRepository<UserEntity, UserId> repository) => _repository = repository;
   public async Task<Guid> Execute(UserRequest request)
   {
-    // 1. Validar unicidad (Regla de aplicación)
-    /* var userEmail = new UserEmail(email);
-    var existing = await _repository.GetByEmailAsync(userEmail);
-    if (existing != null) throw new Exception("El usuario ya existe.");
- */
-    UserId id = UserId.CreateUnique();
-    var user = new UserEntity(
-                    id, 
-                    new UserName(request.Name),
-                    new UserEmail(request.Email),
-                    request.Role
-    );
+    var email = new UserEmail(request.Email);
 
-    // 3. Persistir
-    await _repository.AddAsync(user);
+    var existingUser = await _repository.GetByEmailAsync(email);
+    
+    if (existingUser != null)
+    {
+      throw new AlreadyExistsException($"El email {request.Email} ya está registrado.");
+    }
 
+    var id = UserId.FromGuid(Guid.NewGuid());
+    
+    var entity = new UserEntity(
+                          id,
+                          new UserName(request.Name),
+                          email,
+                          request.Role
+                      );
+
+    await _repository.AddAsync(entity);
+    
     return id.Value;
   }
 }

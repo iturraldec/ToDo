@@ -1,4 +1,3 @@
-#pragma warning disable IDE0005
 using Microsoft.EntityFrameworkCore;
 using Application.DTOs;
 using Application.UseCases.Users;
@@ -7,6 +6,7 @@ using Domain.ValueObjects;
 using Domain.Interfaces;
 using Infrastructure.Models;
 using Infrastructure.Implementations;
+using Api.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,17 +29,19 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+  app.MapOpenApi();
 }
 
 app.UseHttpsRedirection();
 
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 // Endpoint para probar la inserción del primer usuario
 app.MapPost("/users", async (UserRequest request, RegisterUserUseCase useCase) =>
 {
-    var id = await useCase.Execute(request);
-    
-    return Results.Created($"/users/{id}", new { Id = id });
+  var id = await useCase.Execute(request);
+  
+  return Results.Created($"/users/{id}", new { Id = id });
 });
 
 // El endpoint GET que servirá para esa URL
