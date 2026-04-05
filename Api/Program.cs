@@ -19,6 +19,7 @@ builder.Services.AddDbContext<ToDoContext>(options =>
 builder.Services.AddScoped<IRepository<UserEntity, UserId>, UserRepository>();
 builder.Services.AddScoped<RegisterUserUseCase>();
 builder.Services.AddScoped<GetByIdUserUseCase>();
+builder.Services.AddScoped<GetAllUsersUseCase>();
 builder.Services.AddScoped<UpdateUserUseCase>();
 builder.Services.AddScoped<DeleteUserUseCase>();
 
@@ -47,6 +48,13 @@ app.MapGet("/users/{id}", async (Guid id, GetByIdUserUseCase useCase) =>
     var user = await useCase.Execute(id);
     
     return Results.Ok(user);
+});
+
+//
+app.MapGet("/users", async (GetAllUsersUseCase useCase) =>
+{
+    var users = await useCase.Execute();
+    return Results.Ok(users);
 });
 
 // El endpoint PUT que servirá para actualizar un usuario

@@ -28,11 +28,18 @@ public class UserRepository : IRepository<UserEntity, UserId>
                 );
   }
 
-  /* public async Task<IEnumerable<User>> GetAllAsync()
+  public async Task<IReadOnlyList<UserEntity>> GetAllAsync()
   {
-      return await _context.Users.ToListAsync();
-  } */
 
+    var userModels = await _context.Users.AsNoTracking().ToListAsync();
+
+    return userModels.Select(model => new UserEntity(
+        UserId.FromGuid(model.Id),
+        new UserName(model.Name),
+        new UserEmail(model.Email),
+        (Roles) model.Role
+    )).ToList().AsReadOnly();
+  }
   public async Task AddAsync(UserEntity entity)
   {
     var user = new User
