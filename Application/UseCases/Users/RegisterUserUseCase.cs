@@ -7,13 +7,16 @@ using Domain.ValueObjects;
 using Domain.Interfaces;
 
 namespace Application.UseCases.Users;
+
 public class RegisterUserUseCase
 {
   private readonly IRepository<UserEntity, UserId> _repository;
+
   public RegisterUserUseCase(IRepository<UserEntity, UserId> repository) => _repository = repository;
+
   public async Task<Guid> Execute(UserRequest request)
   {
-    var email = new UserEmail(request.Email);
+    var email = UserEmail.Create(request.Email);
 
     var existingUser = await _repository.GetByEmailAsync(email);
     
@@ -22,17 +25,12 @@ public class RegisterUserUseCase
       throw new AlreadyExistsException($"El email {request.Email} ya está registrado.");
     }
 
-    var id = UserId.FromGuid(Guid.NewGuid());
+    var id = UserId.Create();
     
-    var entity = new UserEntity(
-                          id,
-                          new UserName(request.Name),
-                          email,
-                          request.Role
-                      );
+    var entity = new UserEntity(id, new UserName(request.Name), email, request.Role);
 
     await _repository.AddAsync(entity);
     
-    return id.Value;
+    return id;
   }
 }

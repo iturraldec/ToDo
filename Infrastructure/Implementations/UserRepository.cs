@@ -7,13 +7,16 @@ using Domain.ValueObjects;
 using Infrastructure.Models;
 
 namespace Infrastructure.Implementations;
+
 public class UserRepository : IRepository<UserEntity, UserId>
 {
   private readonly ToDoContext _context;
+
   public UserRepository(ToDoContext context)
   {
       _context = context;
   }
+
   public async Task<UserEntity?> GetByIdAsync(UserId id)
   {
     var model = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id.Value);
@@ -23,7 +26,7 @@ public class UserRepository : IRepository<UserEntity, UserId>
     return new UserEntity(
                     UserId.FromGuid(model.Id),
                     new UserName(model.Name),
-                    new UserEmail(model.Email),
+                    UserEmail.Create(model.Email),
                     (Roles) model.Role
                 );
   }
@@ -37,27 +40,29 @@ public class UserRepository : IRepository<UserEntity, UserId>
     return new UserEntity(
                     UserId.FromGuid(model.Id),
                     new UserName(model.Name),
-                    new UserEmail(model.Email),
+                    UserEmail.Create(model.Email),
                     (Roles) model.Role
                 );
   }
+
   public async Task<IReadOnlyList<UserEntity>> GetAllAsync()
   {
 
-    var userModels = await _context.Users.AsNoTracking().ToListAsync();
+    var userModels = await _context.Users.OrderBy(u => u.Name).AsNoTracking().ToListAsync();
 
     return userModels.Select(model => new UserEntity(
-        UserId.FromGuid(model.Id),
-        new UserName(model.Name),
-        new UserEmail(model.Email),
-        (Roles) model.Role
-    )).ToList().AsReadOnly();
+                                              UserId.FromGuid(model.Id),
+                                              new UserName(model.Name),
+                                              UserEmail.Create(model.Email),
+                                              (Roles) model.Role
+                                          )).ToList().AsReadOnly();
   }
+
   public async Task AddAsync(UserEntity entity)
   {
     var user = new User
     {
-      Id = UserId.CreateUnique().Value,
+      Id = UserId.Create().Value,
       Name = entity.Name.Value,
       Email = entity.Email.Value,
       Role = (short) entity.Role
@@ -66,6 +71,7 @@ public class UserRepository : IRepository<UserEntity, UserId>
     await _context.Users.AddAsync(user);
     await _context.SaveChangesAsync();
   }
+
   public async Task UpdateAsync(UserEntity entity)
   {
     var existingModel = await _context.Users.FindAsync(entity.Id.Value);
@@ -75,13 +81,17 @@ public class UserRepository : IRepository<UserEntity, UserId>
         existingModel.Name = entity.Name.Value;
         existingModel.Email = entity.Email.Value;
         existingModel.Role = (short)entity.Role;
+        existingModel.UpdatedAt = DateTime.Now;
 
         await _context.SaveChangesAsync();
     }
   }
+
   public async Task DeleteAsync(UserId id)
   {
     var entity = await GetByIdAsync(id);
+
+    if(entity == null) return;
 
     var user = new User
     {
