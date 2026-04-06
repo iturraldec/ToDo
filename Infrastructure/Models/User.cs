@@ -1,13 +1,10 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+
 namespace Infrastructure.Models;
 
 public partial class User
 {
-    /// <summary>
-    /// Id del usuario.
-    /// </summary>
-    public Guid Id { get; set; }
-    
     /// <summary>
     /// Nombre del usuario.
     /// </summary>
@@ -29,7 +26,16 @@ public partial class User
     public DateTime CreatedAt { get; set; }
 
     /// <summary>
-    /// Fecha y hora de ultima modificacion del usuario.
+    /// Id del usuario.
+    /// </summary>
+    public Guid Id { get; set; }
+
+    /// <summary>
+    /// Fecha y hora de la ultima modificacion del usuario.
     /// </summary>
     public DateTime? UpdatedAt { get; set; }
+
+    public virtual ICollection<Assignment> AssignmentAssignedBies { get; set; } = new List<Assignment>();
+
+    public virtual ICollection<Assignment> AssignmentAssignedTos { get; set; } = new List<Assignment>();
 }

@@ -2,7 +2,7 @@ using Domain.Enums;
 
 namespace Domain.Entities;
 
-public class TaskEntity
+public class AssignmentEntity
 {
   public Guid Id { get; set; }
   
@@ -10,7 +10,7 @@ public class TaskEntity
   
   public string Description { get; set; }
 
-  public TaskStatus Status { get; set; }
+  public MyTaskStatus Status { get; set; }
   
   public DateTime CreatedAt { get; set; }
 

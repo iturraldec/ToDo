@@ -79,3 +79,5 @@ app.MapDelete("/users/{id}", async (Guid id, DeleteUserUseCase useCase) =>
 app.MapGet("/", () => "API ToDo Lista para pruebas").WithName("GetRoot");
 
 app.Run();
+
+// dotnet ef dbcontext scaffold "Host=localhost;Port=5432;Database=ToDo;Username=postgres;Password=J1z01234_" Npgsql.EntityFrameworkCore.PostgreSQL -o Models
