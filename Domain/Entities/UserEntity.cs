@@ -11,26 +11,20 @@ public class UserEntity
   
   public UserEmail Email { get; private set; }
   
-  public Roles Role { get; private set; }
+  public UserRole Role { get; private set; }
   
-  public UserEntity(UserId id, UserName name, UserEmail email, Roles role)
-  {
-    if (!Enum.IsDefined(typeof(Roles), role)) throw new ArgumentException("Rol no válido.");
-    
+  public UserEntity(UserId id, UserName name, UserEmail email, UserRole role)
+  {    
     Id = id;
     Name = name;
     Email = email;
     Role = role;
   }
 
-  public void Update(UserName name, UserEmail email, Roles role)
+  public void Update(UserName name, UserEmail email, UserRole role)
   {
     Name = name;
     Email = email;
     Role = role;
   }
-  
-  public bool IsAdmin() => Role == Roles.Admin;
-  
-  public bool IsOperator() => Role == Roles.Operator;
 }

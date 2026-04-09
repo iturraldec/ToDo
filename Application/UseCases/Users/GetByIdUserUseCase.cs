@@ -8,9 +8,9 @@ namespace Application.UseCases.Users;
 
 public class GetByIdUserUseCase
 {
-  private readonly IRepository<UserEntity, UserId> _repository;
+  private readonly IUserRepository _repository;
 
-  public GetByIdUserUseCase(IRepository<UserEntity, UserId> repository) => _repository = repository;
+  public GetByIdUserUseCase(IUserRepository repository) => _repository = repository;
 
   public async Task<UserResponse?> Execute(Guid id)
   {

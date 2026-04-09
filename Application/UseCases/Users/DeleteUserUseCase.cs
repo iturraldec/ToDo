@@ -7,9 +7,9 @@ namespace Application.UseCases.Users;
 
 public class DeleteUserUseCase
 {
-  private readonly IRepository<UserEntity, UserId> _repository;
+  private readonly IUserRepository _repository;
   
-  public DeleteUserUseCase(IRepository<UserEntity, UserId> repository) => _repository = repository;
+  public DeleteUserUseCase(IUserRepository repository) => _repository = repository;
   
   public async Task Execute(Guid id)
   {

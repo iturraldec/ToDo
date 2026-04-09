@@ -8,7 +8,7 @@ using Infrastructure.Models;
 
 namespace Infrastructure.Implementations;
 
-public class UserRepository : IRepository<UserEntity, UserId>
+public class UserRepository : IUserRepository
 {
   private readonly ToDoContext _context;
 
@@ -62,7 +62,7 @@ public class UserRepository : IRepository<UserEntity, UserId>
   {
     var user = new User
     {
-      Id = UserId.Create().Value,
+      Id = entity.Id.Value,
       Name = entity.Name.Value,
       Email = entity.Email.Value,
       Role = (short) entity.Role

@@ -10,9 +10,9 @@ namespace Application.UseCases.Users;
 
 public class RegisterUserUseCase
 {
-  private readonly IRepository<UserEntity, UserId> _repository;
+  private readonly IUserRepository _repository;
 
-  public RegisterUserUseCase(IRepository<UserEntity, UserId> repository) => _repository = repository;
+  public RegisterUserUseCase(IUserRepository repository) => _repository = repository;
 
   public async Task<Guid> Execute(UserRequest request)
   {

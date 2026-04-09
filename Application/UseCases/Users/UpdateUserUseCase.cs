@@ -8,9 +8,9 @@ namespace Application.UseCases.Users;
 
 public class UpdateUserUseCase
 {
-  private readonly IRepository<UserEntity, UserId> _repository;
+  private readonly IUserRepository _repository;
 
-  public UpdateUserUseCase(IRepository<UserEntity, UserId> repository) => _repository = repository;
+  public UpdateUserUseCase(IUserRepository repository) => _repository = repository;
 
   public async Task Execute(UserRequest request)
   {

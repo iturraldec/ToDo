@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Application.DTOs;
 using Application.UseCases.Users;
+using Application.UseCases.Assignments;
 using Domain.Entities;
 using Domain.ValueObjects;
 using Domain.Interfaces;
@@ -16,12 +17,15 @@ builder.Services.AddDbContext<ToDoContext>(options =>
     options.UseNpgsql(connectionString));
 
 // 2. Registrar los Repositorios
-builder.Services.AddScoped<IRepository<UserEntity, UserId>, UserRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IRepository<AssignmentEntity, Guid>, AssignmentRepository>();
 builder.Services.AddScoped<RegisterUserUseCase>();
 builder.Services.AddScoped<GetByIdUserUseCase>();
 builder.Services.AddScoped<GetAllUsersUseCase>();
 builder.Services.AddScoped<UpdateUserUseCase>();
 builder.Services.AddScoped<DeleteUserUseCase>();
+
+builder.Services.AddScoped<AddAssignmentUseCase>();
 
 builder.Services.AddOpenApi();
 
@@ -73,6 +77,15 @@ app.MapDelete("/users/{id}", async (Guid id, DeleteUserUseCase useCase) =>
     await useCase.Execute(id);
     
     return Results.NoContent();
+});
+
+////////////////////////////////////////////// Assignment - ToDo List API //////////////////////////////////////////////
+
+app.MapPost("/assignments", async (AssignmentAddRequest request, AddAssignmentUseCase useCase) =>
+{
+  var id = await useCase.Execute(request);
+
+  return Results.Created($"/assignments/{id}", new { Id = id });
 });
 
 //

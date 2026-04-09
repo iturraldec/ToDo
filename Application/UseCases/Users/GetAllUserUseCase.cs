@@ -8,9 +8,9 @@ namespace Application.UseCases.Users;
 
 public class GetAllUsersUseCase
 {
-  private readonly IRepository<UserEntity, UserId> _repository;
+  private readonly IUserRepository _repository;
 
-  public GetAllUsersUseCase(IRepository<UserEntity, UserId> repository) => _repository = repository;
+  public GetAllUsersUseCase(IUserRepository repository) => _repository = repository;
 
   public async Task<IEnumerable<UserResponse>> Execute()
   {
