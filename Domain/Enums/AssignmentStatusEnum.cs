@@ -1,6 +1,6 @@
 namespace Domain.Enums;
 
-public enum AssignmentStatus : short
+public enum AssignmentStatusEnum : short
 {
   Pending = 1,
   InProgress = 2,

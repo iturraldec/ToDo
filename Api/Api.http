@@ -1,6 +1,33 @@
 @Api_HostAddress = http://localhost:5296
 
-GET {{Api_HostAddress}}/weatherforecast/
+GET {{Api_HostAddress}}/users/
 Accept: application/json
 
 ###
+GET {{Api_HostAddress}}/users/47ccf05d-38a9-4a00-b31f-60e0eb98fb7c
+Accept: application/json
+
+###
+POST {{Api_HostAddress}}/users/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "role":2,
+  "name": "John Doe",
+  "email": "carolina@ejemplo.com"
+}
+
+###
+DELETE {{Api_HostAddress}}/users/1f5363dc-d5db-464f-bbed-2748c48d6f90
+Accept: application/json
+
+###
+PUT {{Api_HostAddress}}/users/update-name
+Content-Type: application/json
+Accept: application/json
+
+{
+  "id": "47ccf05d-38a9-4a00-b31f-60e0eb98fb7c",
+  "name": "Fatima Updated"
+}

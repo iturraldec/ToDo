@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Application.DTOs;
 using Application.UseCases.Users;
-using Application.UseCases.Assignments;
+//using Application.UseCases.Assignments;
 using Domain.Entities;
 using Domain.ValueObjects;
 using Domain.Interfaces;
@@ -18,14 +18,14 @@ builder.Services.AddDbContext<ToDoContext>(options =>
 
 // 2. Registrar los Repositorios
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IRepository<AssignmentEntity, Guid>, AssignmentRepository>();
-builder.Services.AddScoped<RegisterUserUseCase>();
+//builder.Services.AddScoped<IRepository<AssignmentEntity, Guid>, AssignmentRepository>();
+builder.Services.AddScoped<AddUserUseCase>();
 builder.Services.AddScoped<GetByIdUserUseCase>();
 builder.Services.AddScoped<GetAllUsersUseCase>();
-builder.Services.AddScoped<UpdateUserUseCase>();
+builder.Services.AddScoped<UpdateNameUserUseCase>();
 builder.Services.AddScoped<DeleteUserUseCase>();
 
-builder.Services.AddScoped<AddAssignmentUseCase>();
+//builder.Services.AddScoped<AddAssignmentUseCase>();
 
 builder.Services.AddOpenApi();
 
@@ -41,7 +41,7 @@ app.UseHttpsRedirection();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // Endpoint para probar la inserción del primer usuario
-app.MapPost("/users", async (UserRequest request, RegisterUserUseCase useCase) =>
+app.MapPost("/users", async (UserAddRequest request, AddUserUseCase useCase) =>
 {
   var id = await useCase.Execute(request);
   
@@ -63,8 +63,8 @@ app.MapGet("/users", async (GetAllUsersUseCase useCase) =>
     return Results.Ok(users);
 });
 
-// El endpoint PUT que servirá para actualizar un usuario
-app.MapPut("/users", async (UserRequest request, UpdateUserUseCase useCase) =>
+// actualizar el nombre de un usuario
+app.MapPut("/users/update-name", async (UserUpdateNameRequest request, UpdateNameUserUseCase useCase) =>
 {
     await useCase.Execute(request);
     
@@ -81,13 +81,13 @@ app.MapDelete("/users/{id}", async (Guid id, DeleteUserUseCase useCase) =>
 
 ////////////////////////////////////////////// Assignment - ToDo List API //////////////////////////////////////////////
 
-app.MapPost("/assignments", async (AssignmentAddRequest request, AddAssignmentUseCase useCase) =>
+/* app.MapPost("/assignments", async (AssignmentAddRequest request, AddAssignmentUseCase useCase) =>
 {
   var id = await useCase.Execute(request);
 
   return Results.Created($"/assignments/{id}", new { Id = id });
 });
-
+ */
 //
 app.MapGet("/", () => "API ToDo Lista para pruebas").WithName("GetRoot");
 

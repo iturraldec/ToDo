@@ -8,14 +8,11 @@ using Infrastructure.Models;
 
 namespace Infrastructure.Implementations;
 
-public class UserRepository : IUserRepository
+public class UserRepository : IUserRepository, IUserReads
 {
   private readonly ToDoContext _context;
 
-  public UserRepository(ToDoContext context)
-  {
-      _context = context;
-  }
+  public UserRepository(ToDoContext context) =>_context = context;
 
   public async Task<UserEntity?> GetByIdAsync(UserId id)
   {
@@ -23,85 +20,64 @@ public class UserRepository : IUserRepository
 
     if (model == null) return null;
 
-    return new UserEntity(
-                    UserId.FromGuid(model.Id),
+    return UserEntity.FromPersistence(
+                    new UserId(model.Id),
+                    new UserRole((UserRolesEnum)model.Role),
                     new UserName(model.Name),
-                    UserEmail.Create(model.Email),
-                    (Roles) model.Role
+                    new UserEmail(model.Email),
+                    new UserStatus((UserStatusEnum)model.Status)
                 );
   }
-
-  public async Task<UserEntity?> GetByEmailAsync(UserEmail email)
+  public async Task<bool> IsEmailExistsAsync(string email)
   {
-    var model = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == email.Value);
+    var model = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == email);
 
-    if (model == null) return null;
-
-    return new UserEntity(
-                    UserId.FromGuid(model.Id),
-                    new UserName(model.Name),
-                    UserEmail.Create(model.Email),
-                    (Roles) model.Role
-                );
+    return model != null;
   }
-
-  public async Task<IReadOnlyList<UserEntity>> GetAllAsync()
+  public async Task<IReadOnlyList<UserResponse>> GetAllAsync()
   {
 
     var userModels = await _context.Users.OrderBy(u => u.Name).AsNoTracking().ToListAsync();
 
-    return userModels.Select(model => new UserEntity(
-                                              UserId.FromGuid(model.Id),
-                                              new UserName(model.Name),
-                                              UserEmail.Create(model.Email),
-                                              (Roles) model.Role
-                                          )).ToList().AsReadOnly();
+    return userModels.Select(model => new UserResponse(
+                                            new UserRole((UserRolesEnum)model.Role).ToString(),
+                                            model.Name,
+                                            model.Email,
+                                            new UserStatus((UserStatusEnum)model.Status).ToString(),
+                                            model.CreatedAt,
+                                            model.UpdatedAt
+                                  ))
+                                  .ToList()
+                                  .AsReadOnly();
   }
 
   public async Task AddAsync(UserEntity entity)
   {
-    var user = new User
+    var userModel = new User
     {
       Id = entity.Id.Value,
       Name = entity.Name.Value,
       Email = entity.Email.Value,
-      Role = (short) entity.Role
+      Role = (short) entity.Role.Value,
+      Status = (short) entity.Status.Value,
+      CreatedAt = DateTime.Now
     };
     
-    await _context.Users.AddAsync(user);
+    await _context.Users.AddAsync(userModel);
     await _context.SaveChangesAsync();
   }
-
-  public async Task UpdateAsync(UserEntity entity)
+  public async Task UpdateNameAsync(UserName name)
   {
-    var existingModel = await _context.Users.FindAsync(entity.Id.Value);
+    var existingModel = await _context.Users.FindAsync(name.Value);
     
     if (existingModel != null)
     {
-        existingModel.Name = entity.Name.Value;
-        existingModel.Email = entity.Email.Value;
-        existingModel.Role = (short)entity.Role;
+        existingModel.Name = name.Value;
         existingModel.UpdatedAt = DateTime.Now;
 
-        await _context.SaveChangesAsync();
+        await SaveChangesAsync();
     }
   }
-
-  public async Task DeleteAsync(UserId id)
-  {
-    var entity = await GetByIdAsync(id);
-
-    if(entity == null) return;
-
-    var user = new User
-    {
-      Id = entity.Id.Value,
-      Name = entity.Name.Value,
-      Email = entity.Email.Value,
-      Role = (short)entity.Role
-    };
-
-    _context.Users.Remove(user);
-    await _context.SaveChangesAsync();
-  }
+  public async Task DeleteAsync(UserId id) => await _context.Users.Where(u => u.Id == id.Value).ExecuteDeleteAsync();
+  public async Task SaveChangesAsync() => await _context.SaveChangesAsync();
 }

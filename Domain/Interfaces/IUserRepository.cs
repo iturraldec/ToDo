@@ -5,5 +5,5 @@ namespace Domain.Interfaces;
 
 public interface IUserRepository : IRepository<UserEntity, UserId>
 {
-  Task<UserEntity?> GetByEmailAsync(UserEmail email);
+  Task UpdateNameAsync(UserEntity user);
 }

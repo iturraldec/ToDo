@@ -1,5 +1,5 @@
-#pragma warning disable IDE0005
 using Application.DTOs;
+using Application.Interfaces;
 using Domain.Exceptions;
 using Domain.Enums;
 using Domain.Entities;
@@ -10,27 +10,26 @@ namespace Application.UseCases.Users;
 
 public class RegisterUserUseCase
 {
-  private readonly IUserRepository _repository;
+  private readonly IRepository<UserEntity, UserId> _repository;
+  private readonly IUserReads _userReadService;
+  private readonly IUnitOfWork _unitOfWork;
 
-  public RegisterUserUseCase(IUserRepository repository) => _repository = repository;
-
-  public async Task<Guid> Execute(UserRequest request)
+  public RegisterUserUseCase(IRepository<UserEntity, UserId> repository, IUserReads userReadService, IUnitOfWork unitOfWork)
   {
-    var email = UserEmail.Create(request.Email);
+    _repository = repository;
+    _userReadService = userReadService;
+    _unitOfWork = unitOfWork;
+  }
 
-    var existingUser = await _repository.GetByEmailAsync(email);
+  public async Task<string> Execute(RegisterUserRequest request)
+  {
+    if (await _userReadService.IsEmailExistsAsync(request.Email)) throw new AlreadyExistsException($"El email {request.Email} ya está registrado.");
     
-    if (existingUser != null)
-    {
-      throw new AlreadyExistsException($"El email {request.Email} ya está registrado.");
-    }
+    var entity = UserEntity.Create(UserId.Unique(), new UserRole((UserRolesEnum)request.Role), new UserName(request.Name), new UserEmail(request.Email));
 
-    var id = UserId.Create();
-    
-    var entity = new UserEntity(id, new UserName(request.Name), email, request.Role);
+    await _repository.RegisterAsync(entity);
+    await _unitOfWork.SaveChangesAsync();
 
-    await _repository.AddAsync(entity);
-    
-    return id;
+    return entity.Id.ToString();
   }
 }

@@ -13,10 +13,10 @@ public class DeleteUserUseCase
   
   public async Task Execute(Guid id)
   {
-    var entity = await _repository.GetByIdAsync(UserId.FromGuid(id));
+    var entity = await _repository.GetByIdAsync(new UserId(id));
 
     if (entity == null) throw new Exception("User not found");
 
-    await _repository.DeleteAsync(UserId.FromGuid(id));
+    await _repository.DeleteAsync(new UserId(id));
   }
 }

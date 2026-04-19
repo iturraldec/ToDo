@@ -4,13 +4,7 @@ namespace Domain.Interfaces;
 
 public interface IRepository<T, TId> where T : class
 {
+  Task RegisterAsync(T entity);
   Task<T?> GetByIdAsync(TId id);
-
-  Task<IReadOnlyList<T>> GetAllAsync();
-
-  Task AddAsync(T entity);
-
-  Task UpdateAsync(T entity);
-
-  Task DeleteAsync(TId id);
+  Task DeleteAsync(T entity);
 }

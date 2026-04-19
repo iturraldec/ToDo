@@ -1,0 +1,24 @@
+using Domain.Enums;
+using Domain.ValueObjects;
+
+namespace Domain.Entities;
+
+public class AssignmentEntity
+{
+  public AssignmentId Id { get; private set; }
+  public UserId UserId { get; private set; }    // El responsable de la tarea
+  public string Title { get; private set; }
+  public string? Description { get; private set; }
+  public AssignmentStatus Status { get; private set; }
+  public DateTime CreatedAt { get; }
+
+  public AssignmentEntity(AssignmentId id, UserId userId, UserId creatorId, string title, string? description)
+  {
+    Id = id;
+    UserId = userId;
+    Title = title;
+    Description = description;
+    Status = AssignmentStatus.Pending;
+    CreatedAt = DateTime.UtcNow;
+  }
+}
