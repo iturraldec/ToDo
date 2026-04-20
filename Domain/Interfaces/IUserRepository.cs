@@ -5,5 +5,5 @@ namespace Domain.Interfaces;
 
 public interface IUserRepository : IRepository<UserEntity, UserId>
 {
-  Task UpdateNameAsync(UserEntity user);
+  Task ChangeNameAsync(UserEntity user);
 }

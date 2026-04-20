@@ -7,4 +7,5 @@ public interface IUserReads
 {
   Task<bool> IsEmailExistsAsync(string email);
   Task<IReadOnlyList<UserResponse>> GetAllUsersAsync();
+  Task<UserResponse?> GetDetailsByIdAsync(string id);
 }

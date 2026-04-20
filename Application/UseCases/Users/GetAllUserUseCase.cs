@@ -2,7 +2,6 @@ using Application.DTOs;
 using Application.Interfaces;
 
 namespace Application.UseCases.Users;
-
 public class GetAllUsersUseCase
 {
   private readonly IUserReads _repository;

@@ -1,20 +1,19 @@
 using Domain.Entities;
 using Domain.ValueObjects;
 using Domain.Interfaces;
+using Domain.Exceptions;
 
 namespace Application.UseCases.Users;
 
 public class GetByIdUserUseCase
 {
   private readonly IRepository<UserEntity, UserId> _repository;
-
   public GetByIdUserUseCase(IRepository<UserEntity, UserId> repository) => _repository = repository;
-
   public async Task<UserEntity?> Execute(Guid id)
   {
     var entity = await _repository.GetByIdAsync(new UserId(id));
  
-    if (entity == null) throw new Exception("User not found");
+    if (entity == null) throw new NotFoundException("User not found");
 
     return entity;
   }
