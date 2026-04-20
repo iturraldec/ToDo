@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Application.DTOs;
+using Application.Interfaces;
 using Application.UseCases.Users;
 using Domain.Entities;
 using Domain.ValueObjects;
@@ -16,17 +17,18 @@ builder.Services.AddDbContext<ToDoContext>(options =>
     options.UseNpgsql(connectionString));
 
 // 2. Registrar los Repositorios
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-//builder.Services.AddScoped<IRepository<AssignmentEntity, Guid>, AssignmentRepository>();
-builder.Services.AddScoped<AddUserUseCase>();
+builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<IUserRepository>(sp => sp.GetRequiredService<UserRepository>());
+builder.Services.AddScoped<IUserReads>(sp => sp.GetRequiredService<UserRepository>());
+builder.Services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<UserRepository>());
+builder.Services.AddScoped<IRepository<UserEntity, UserId>>(sp => sp.GetRequiredService<UserRepository>());
+
+builder.Services.AddScoped<RegisterUserUseCase>();
 builder.Services.AddScoped<GetByIdUserUseCase>();
+builder.Services.AddScoped<GetDetailsByIdUserUseCase>(); // No olvides este
 builder.Services.AddScoped<GetAllUsersUseCase>();
-builder.Services.AddScoped<UpdateNameUserUseCase>();
+builder.Services.AddScoped<ChangeNameUserUseCase>();
 builder.Services.AddScoped<DeleteUserUseCase>();
-
-//builder.Services.AddScoped<AddAssignmentUseCase>();
-
-builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
@@ -40,22 +42,22 @@ app.UseHttpsRedirection();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // Endpoint para probar la inserción del primer usuario
-app.MapPost("/users", async (UserAddRequest request, AddUserUseCase useCase) =>
+app.MapPost("/users", async (RegisterUserRequest request, RegisterUserUseCase useCase) =>
 {
   var id = await useCase.Execute(request);
   
   return Results.Created($"/users/{id}", new { Id = id });
 });
 
-// El endpoint GET que servirá para esa URL
-app.MapGet("/users/{id}", async (Guid id, GetByIdUserUseCase useCase) => 
+// traer un usuario por su id
+app.MapGet("/users/{id}", async (string id, GetDetailsByIdUserUseCase useCase) => 
 {
     var user = await useCase.Execute(id);
     
     return Results.Ok(user);
 });
 
-//
+// listado de usuarios
 app.MapGet("/users", async (GetAllUsersUseCase useCase) =>
 {
     var users = await useCase.Execute();
@@ -63,14 +65,14 @@ app.MapGet("/users", async (GetAllUsersUseCase useCase) =>
 });
 
 // actualizar el nombre de un usuario
-app.MapPut("/users/update-name", async (UserUpdateNameRequest request, UpdateNameUserUseCase useCase) =>
+app.MapPut("/users/update-name", async (ChangeUserNameRequest request, ChangeNameUserUseCase useCase) =>
 {
     await useCase.Execute(request);
     
     return Results.NoContent();
 });
 
-//
+// eliminar un usuario por su id
 app.MapDelete("/users/{id}", async (Guid id, DeleteUserUseCase useCase) =>
 {
     await useCase.Execute(id);

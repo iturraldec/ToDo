@@ -5,11 +5,11 @@ using Domain.Interfaces;
 using Domain.Exceptions;
 
 namespace Application.UseCases.Users;
-public class ChangeUserNameUseCase
+public class ChangeNameUserUseCase
 {
   private readonly IUserRepository _userRepository;
   private readonly IUnitOfWork _unitOfWork;
-  public ChangeUserNameUseCase(IUserRepository userRepository, IUnitOfWork unitOfWork)
+  public ChangeNameUserUseCase(IUserRepository userRepository, IUnitOfWork unitOfWork)
   {
       _userRepository = userRepository;
       _unitOfWork = unitOfWork;

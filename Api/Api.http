@@ -1,33 +1,35 @@
 @Api_HostAddress = http://localhost:5296
 
+### listar usuarios
 GET {{Api_HostAddress}}/users/
 Accept: application/json
 
-###
-GET {{Api_HostAddress}}/users/47ccf05d-38a9-4a00-b31f-60e0eb98fb7c
+### ver un usuario
+### agregar un usuario
+GET {{Api_HostAddress}}/users/1c95bdcf-9904-4642-b4b2-35e49805174d
 Accept: application/json
 
-###
+### agregar un usuario
 POST {{Api_HostAddress}}/users/
 Content-Type: application/json
 Accept: application/json
 
 {
   "role":2,
-  "name": "John Doe",
-  "email": "carolina@ejemplo.com"
+  "name": "Darth Vader",
+  "email": "dv@ejemplo.com"
 }
 
-###
-DELETE {{Api_HostAddress}}/users/1f5363dc-d5db-464f-bbed-2748c48d6f90
-Accept: application/json
-
-###
+### mdificar el nombre de un usuario
 PUT {{Api_HostAddress}}/users/update-name
 Content-Type: application/json
 Accept: application/json
 
 {
-  "id": "47ccf05d-38a9-4a00-b31f-60e0eb98fb7c",
-  "name": "Fatima Updated"
+  "id": "1c95bdcf-9904-4642-b4b2-35e49805174d",
+  "name": "Anakin Skywalker"
 }
+
+###
+DELETE {{Api_HostAddress}}/users/1c95bdcf-9904-4642-b4b2-35e49805174d
+Accept: application/json
