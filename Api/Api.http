@@ -40,8 +40,8 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "AssignedToId":"731a7efa-6572-4af5-8241-2395bd366c5e",
+  "AssignedToId":"47ccf05d-38a9-4a00-b31f-60e0eb98fb7c",
   "title": "Task de demostracion",
   "description": "primer task",
-  "dueAt": "2026-04-22"
+  "dueAt": "2026-05-22"
 }

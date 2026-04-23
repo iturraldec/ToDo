@@ -46,6 +46,12 @@ public class UserRepository : IUserRepository, IUserReads
                 model.UpdatedAt
           );
   }
+  public async Task<bool> IsIdExistsAsync(UserId id)
+  {
+    var model = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id.Value);
+
+    return model != null;
+  }
   public async Task<bool> IsEmailExistsAsync(string email)
   {
     var model = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == email);

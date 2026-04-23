@@ -22,9 +22,9 @@ builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<AssignmentRepository>();
 builder.Services.AddScoped<UnitOfWork>();
 
+builder.Services.AddScoped<IRepository<UserEntity, UserId>>(sp => sp.GetRequiredService<UserRepository>());
 builder.Services.AddScoped<IUserRepository>(sp => sp.GetRequiredService<UserRepository>());
 builder.Services.AddScoped<IUserReads>(sp => sp.GetRequiredService<UserRepository>());
-builder.Services.AddScoped<IRepository<UserEntity, UserId>>(sp => sp.GetRequiredService<UserRepository>());
 
 builder.Services.AddScoped<IRepository<AssignmentEntity, AssignmentId>>(sp => sp.GetRequiredService<AssignmentRepository>());
 
@@ -91,6 +91,7 @@ app.MapDelete("/users/{id}", async (Guid id, DeleteUserUseCase useCase) =>
 
 ////////////////////////////////////////////// Assignment - ToDo List API //////////////////////////////////////////////
 
+// agregar tarea
 app.MapPost("/assignments", async (RegisterAssignmentRequest request, RegisterAssignmentUseCase useCase) =>
 {
   var id = await useCase.Execute(request);
@@ -103,4 +104,4 @@ app.MapGet("/", () => "API ToDo Lista para pruebas").WithName("GetRoot");
 
 app.Run();
 
-// dotnet ef dbcontext scaffold "Host=localhost;Port=5432;Database=ToDo;Username=postgres;Password=J1z01234_" Npgsql.EntityFrameworkCore.PostgreSQL -o Models
+// dotnet ef dbcontext scaffold "Host=localhost;Port=5432;Database=ToDo;Username=postgres;Password=J1z01234_" Npgsql.EntityFrameworkCore.PostgreSQL -f -o Models

@@ -5,6 +5,7 @@ namespace Application.Interfaces;
 
 public interface IUserReads
 {
+  Task<bool> IsIdExistsAsync(UserId id);
   Task<bool> IsEmailExistsAsync(string email);
   Task<IReadOnlyList<UserResponse>> GetAllUsersAsync();
   Task<UserResponse?> GetDetailsByIdAsync(string id);
