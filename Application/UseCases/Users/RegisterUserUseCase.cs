@@ -25,7 +25,7 @@ public class RegisterUserUseCase
   {
     if (await _userReadService.IsEmailExistsAsync(request.Email)) throw new AlreadyExistsException($"El email {request.Email} ya está registrado.");
     
-    var entity = UserEntity.Create(UserId.Unique(), new UserRole((UserRolesEnum)request.Role), new UserName(request.Name), new UserEmail(request.Email));
+    var entity = UserEntity.Create(UserId.Create(), new UserRole((UserRolesEnum)request.Role), new UserName(request.Name), new UserEmail(request.Email));
 
     await _repository.RegisterAsync(entity);
     await _unitOfWork.SaveChangesAsync();

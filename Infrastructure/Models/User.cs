@@ -36,8 +36,4 @@ public partial class User
     public DateTime? UpdatedAt { get; set; }
 
     public short Status { get; set; }
-
-    public virtual ICollection<Assignment> AssignmentAssignedBies { get; set; } = new List<Assignment>();
-
-    public virtual ICollection<Assignment> AssignmentAssignedTos { get; set; } = new List<Assignment>();
 }

@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Application.DTOs;
 using Application.Interfaces;
 using Application.UseCases.Users;
+using Application.UseCases.Assignments;
 using Domain.Entities;
 using Domain.ValueObjects;
 using Domain.Interfaces;
@@ -18,17 +19,25 @@ builder.Services.AddDbContext<ToDoContext>(options =>
 
 // 2. Registrar los Repositorios
 builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<AssignmentRepository>();
+builder.Services.AddScoped<UnitOfWork>();
+
 builder.Services.AddScoped<IUserRepository>(sp => sp.GetRequiredService<UserRepository>());
 builder.Services.AddScoped<IUserReads>(sp => sp.GetRequiredService<UserRepository>());
-builder.Services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<UserRepository>());
 builder.Services.AddScoped<IRepository<UserEntity, UserId>>(sp => sp.GetRequiredService<UserRepository>());
+
+builder.Services.AddScoped<IRepository<AssignmentEntity, AssignmentId>>(sp => sp.GetRequiredService<AssignmentRepository>());
+
+builder.Services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<UnitOfWork>());
 
 builder.Services.AddScoped<RegisterUserUseCase>();
 builder.Services.AddScoped<GetByIdUserUseCase>();
-builder.Services.AddScoped<GetDetailsByIdUserUseCase>(); // No olvides este
+builder.Services.AddScoped<GetDetailsByIdUserUseCase>();
 builder.Services.AddScoped<GetAllUsersUseCase>();
 builder.Services.AddScoped<ChangeNameUserUseCase>();
 builder.Services.AddScoped<DeleteUserUseCase>();
+
+builder.Services.AddScoped<RegisterAssignmentUseCase>();
 
 var app = builder.Build();
 
@@ -82,13 +91,13 @@ app.MapDelete("/users/{id}", async (Guid id, DeleteUserUseCase useCase) =>
 
 ////////////////////////////////////////////// Assignment - ToDo List API //////////////////////////////////////////////
 
-/* app.MapPost("/assignments", async (AssignmentAddRequest request, AddAssignmentUseCase useCase) =>
+app.MapPost("/assignments", async (RegisterAssignmentRequest request, RegisterAssignmentUseCase useCase) =>
 {
   var id = await useCase.Execute(request);
 
   return Results.Created($"/assignments/{id}", new { Id = id });
 });
- */
+ 
 //
 app.MapGet("/", () => "API ToDo Lista para pruebas").WithName("GetRoot");
 

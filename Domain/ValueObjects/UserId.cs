@@ -9,6 +9,6 @@ public record UserId
 
     Value = value;
   }
-  public static UserId Unique() => new(Guid.NewGuid());
+  public static UserId Create() => new(Guid.NewGuid());
   public override string ToString() => Value.ToString();
 }

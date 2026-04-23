@@ -8,11 +8,15 @@ using Domain.ValueObjects;
 using Infrastructure.Models;
 
 namespace Infrastructure.Implementations;
-
-public class UserRepository : IUserRepository, IUserReads, IUnitOfWork
+public class UserRepository : IUserRepository, IUserReads
 {
   private readonly ToDoContext _context;
-  public UserRepository(ToDoContext context) =>_context = context;
+  private readonly IUnitOfWork _unitOfWork;
+  public UserRepository(ToDoContext context, IUnitOfWork unitOfWork)
+  {
+    _context = context;
+    _unitOfWork = unitOfWork;
+  }
   public async Task<UserEntity?> GetByIdAsync(UserId id)
   {
     var model = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id.Value);
@@ -89,10 +93,4 @@ public class UserRepository : IUserRepository, IUserReads, IUnitOfWork
     }
   }
   public async Task DeleteAsync(UserEntity entity) => await _context.Users.Where(u => u.Id == entity.Id.Value).ExecuteDeleteAsync();
-  public async Task<int> SaveChangesAsync() => await _context.SaveChangesAsync();
-  public void Dispose()
-  {
-    _context.Dispose();
-    GC.SuppressFinalize(this);
-  }
 }

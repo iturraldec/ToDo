@@ -33,3 +33,15 @@ Accept: application/json
 ###
 DELETE {{Api_HostAddress}}/users/1c95bdcf-9904-4642-b4b2-35e49805174d
 Accept: application/json
+
+### agregar tarea
+POST {{Api_HostAddress}}/assignments/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "AssignedToId":"731a7efa-6572-4af5-8241-2395bd366c5e",
+  "title": "Task de demostracion",
+  "description": "primer task",
+  "dueAt": "2026-04-22"
+}

@@ -31,20 +31,17 @@ public partial class ToDoContext : DbContext
 
             entity.ToTable("assignments");
 
-            entity.HasIndex(e => e.AssignedById, "idx_assignments_assigned_by");
-
-            entity.HasIndex(e => e.AssignedToId, "idx_assignments_assigned_to");
-
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
-            entity.Property(e => e.AssignedById).HasColumnName("assigned_by_id");
-            entity.Property(e => e.AssignedToId).HasColumnName("assigned_to_id");
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("created_at");
             entity.Property(e => e.Description).HasColumnName("description");
+            entity.Property(e => e.DueAt)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("due_at");
             entity.Property(e => e.Status)
                 .HasDefaultValue((short)1)
                 .HasColumnName("status");
@@ -54,16 +51,7 @@ public partial class ToDoContext : DbContext
             entity.Property(e => e.UpdatedAt)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("updated_at");
-
-            entity.HasOne(d => d.AssignedBy).WithMany(p => p.AssignmentAssignedBies)
-                .HasForeignKey(d => d.AssignedById)
-                .OnDelete(DeleteBehavior.Restrict)
-                .HasConstraintName("fk_user_assigned_by");
-
-            entity.HasOne(d => d.AssignedTo).WithMany(p => p.AssignmentAssignedTos)
-                .HasForeignKey(d => d.AssignedToId)
-                .OnDelete(DeleteBehavior.Restrict)
-                .HasConstraintName("fk_user_assigned_to");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
         });
 
         modelBuilder.Entity<User>(entity =>

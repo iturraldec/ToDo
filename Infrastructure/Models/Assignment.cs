@@ -17,11 +17,7 @@ public partial class Assignment
 
     public DateTime? UpdatedAt { get; set; }
 
-    public Guid AssignedById { get; set; }
+    public Guid UserId { get; set; }
 
-    public Guid AssignedToId { get; set; }
-
-    public virtual User AssignedBy { get; set; } = null!;
-
-    public virtual User AssignedTo { get; set; } = null!;
+    public DateTime DueAt { get; set; }
 }
