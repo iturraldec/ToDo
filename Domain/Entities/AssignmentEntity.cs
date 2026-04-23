@@ -1,0 +1,84 @@
+using Domain.Enums;
+using Domain.ValueObjects;
+
+namespace Domain.Entities;
+public class AssignmentEntity
+{
+  public AssignmentId Id { get; private set; }
+  public UserId UserId { get; private set; }
+  public AssignmentTitle Title { get; private set; }
+  public AssignmentDescription Description { get; private set; }
+  public AssignmentStatus Status { get; private set; }
+  public DateTime CreatedAt { get; private set; }
+  public DateTime DueAt { get; private set; }
+
+  // contructor privado para forzar el uso de la fábrica
+  private AssignmentEntity(AssignmentId id, UserId userId, AssignmentTitle title, AssignmentDescription description, AssignmentStatus status, DateTime createdAt, DateTime dueAt)
+  {
+    Id = id;
+    UserId = userId;
+    Title = title;
+    Description = description;
+    Status = status;
+    CreatedAt = createdAt;
+    DueAt = dueAt;
+  }
+
+  // fábrica para crear una nueva asignación
+  public static AssignmentEntity Create(
+                  AssignmentId id, 
+                  UserId userId, 
+                  AssignmentTitle title, 
+                  AssignmentDescription description, 
+                  DateTime createdAt, 
+                  DateTime dueAt) 
+  {
+    if(dueAt < createdAt)
+    {
+      throw new ArgumentException("La fecha de vencimiento debe ser posterior a la fecha de creación.");
+    }
+
+    return new(id, 
+              userId, 
+              title, 
+              description, 
+              new AssignmentStatus(AssignmentStatusEnum.Pending), 
+              createdAt, 
+              dueAt);
+  }
+
+  // método para actualizar el estado de la asignación
+  public void ChangeStatus(AssignmentStatusEnum newStatus, UserRolesEnum userRole)
+  {
+      bool isAdmin = userRole == UserRolesEnum.Admin;
+
+      // "Status" es la propiedad actual de la entidad Tarea
+      bool isValid = (Status.Value, newStatus) switch
+      {
+          // Reglas generales (Cualquier rol)
+          (AssignmentStatusEnum.Pending, AssignmentStatusEnum.InProgress) => true,
+          (AssignmentStatusEnum.InProgress, AssignmentStatusEnum.Completed) => true,
+
+          // Reglas exclusivas de Administrador
+          (AssignmentStatusEnum.Pending, AssignmentStatusEnum.Archived) when isAdmin => true,
+          (AssignmentStatusEnum.InProgress, AssignmentStatusEnum.Archived) when isAdmin => true,
+          (AssignmentStatusEnum.Completed, AssignmentStatusEnum.InProgress) when isAdmin => true,
+
+          // No hay cambio (Quedarse en el mismo estado)
+          _ when Status.Value == newStatus => true,
+
+          // Cualquier otro caso es inválido
+          _ => false
+      };
+
+      if (!isValid)
+      {
+          throw new Exception(
+              $"Transición no permitida: {Status} -> {newStatus}. " +
+              $"El rol '{userRole}' no tiene permisos para esta acción específica."
+          );
+      }
+
+      Status = new AssignmentStatus(newStatus);
+  }
+}
