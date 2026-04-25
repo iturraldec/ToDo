@@ -21,12 +21,15 @@ public class AssignmentRepository : IRepository<AssignmentEntity, AssignmentId>,
   public async Task<AssignmentEntity?> GetByIdAsync(AssignmentId id) => throw new NotImplementedException();
   public async Task<AssignmentResponse?> GetDetailsByIdAsync(Guid id)
   {
-    var model = await _context.Assignments.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id);
+    var model = await _context.Assignments
+                              .Include(a => a.User)
+                              .AsNoTracking()
+                              .FirstOrDefaultAsync(u => u.Id == id);
 
     if(model == null) return null;
 
     return new AssignmentResponse(
-                "nombre del responsable", // AssignmentName
+                model.User.Name,           // AssignmentName
                 model.Title,               // Title
                 model.Description,         // Description
                 new AssignmentStatus((AssignmentStatusEnum)model.Status).ToString(), // Status
@@ -40,7 +43,7 @@ public class AssignmentRepository : IRepository<AssignmentEntity, AssignmentId>,
     var model = new Assignment
     {
         Id = assignment.Id.Value,
-        UserId = assignment.Id.Value,
+        UserId = assignment.AssignmentToId.Value,
         Title = assignment.Title.Value,
         Description = assignment.Description.Value,
         Status = (short)assignment.Status.Value,

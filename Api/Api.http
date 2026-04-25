@@ -39,8 +39,12 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "AssignedToId":"47ccf05d-38a9-4a00-b31f-60e0eb98fb7c",
-  "title": "Task de demostracion",
-  "description": "primer task",
-  "dueAt": "2026-05-22"
+  "AssignedToId":"827fb15f-a8bb-4645-a045-6b82187a1f24",
+  "title": "Task de demostracion 002",
+  "description": "segundo task",
+  "dueAt": "2026-05-01"
 }
+
+### ver una tarea
+GET {{Api_HostAddress}}/assignments/468c6d12-7532-4980-bb58-3978af4afc0d/details
+Accept: application/json

@@ -27,7 +27,7 @@ builder.Services.AddScoped<IUserRepository>(sp => sp.GetRequiredService<UserRepo
 builder.Services.AddScoped<IUserReads>(sp => sp.GetRequiredService<UserRepository>());
 
 builder.Services.AddScoped<IRepository<AssignmentEntity, AssignmentId>>(sp => sp.GetRequiredService<AssignmentRepository>());
-
+builder.Services.AddScoped<IAssignmentReads>(sp => sp.GetRequiredService<AssignmentRepository>());
 builder.Services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<UnitOfWork>());
 
 builder.Services.AddScoped<RegisterUserUseCase>();
@@ -38,6 +38,7 @@ builder.Services.AddScoped<ChangeNameUserUseCase>();
 builder.Services.AddScoped<DeleteUserUseCase>();
 
 builder.Services.AddScoped<RegisterAssignmentUseCase>();
+builder.Services.AddScoped<GetDetailsByIdAssignmentUseCase>();
 
 var app = builder.Build();
 
@@ -101,11 +102,11 @@ app.MapPost("/assignments", async (RegisterAssignmentRequest request, RegisterAs
 });
 
 // traer una tarea por su id
-app.MapGet("/users/{id}", async (Guid id, GetDetailsByIdUserUseCase useCase) => 
+app.MapGet("/assignments/{id}/details", async (Guid id, GetDetailsByIdAssignmentUseCase useCase) => 
 {
-    var user = await useCase.Execute(id);
+    var assignment = await useCase.Execute(id);
     
-    return Results.Ok(user);
+    return Results.Ok(assignment);
 });
 
 //

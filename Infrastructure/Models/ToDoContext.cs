@@ -31,6 +31,8 @@ public partial class ToDoContext : DbContext
 
             entity.ToTable("assignments");
 
+            entity.HasIndex(e => e.UserId, "idx_userid");
+
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
@@ -52,6 +54,11 @@ public partial class ToDoContext : DbContext
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("updated_at");
             entity.Property(e => e.UserId).HasColumnName("user_id");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Assignments)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_user_id");
         });
 
         modelBuilder.Entity<User>(entity =>
