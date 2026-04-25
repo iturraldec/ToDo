@@ -23,15 +23,18 @@ public class RegisterAssignmentUseCase
 
   public async Task<string> Execute(RegisterAssignmentRequest request)
   {
-    if (! await _userReadService.IsIdExistsAsync(new UserId(request.AssignedToId))) throw new NotFoundException($"El usuario con ID {request.AssignedToId} no existe.");
+    var userId = new UserId(request.AssignedToId);
+    var createAt = AssignmentCreadtedAt.Create();
+
+    if (! await _userReadService.IsIdExistsAsync(userId)) throw new NotFoundException($"El usuario con ID {request.AssignedToId} no existe.");
 
     var entity = AssignmentEntity.Create(
                   AssignmentId.Create(), 
-                  new UserId(request.AssignedToId),
+                  userId,
                   new AssignmentTitle(request.Title),
                   new AssignmentDescription(request.Description),
-                  DateTime.Now,
-                  request.DueAt);
+                  createAt,
+                  new AssignmentDueAt(request.DueAt, createAt));
 
     await _repository.RegisterAsync(entity);
     await _unitOfWork.SaveChangesAsync();

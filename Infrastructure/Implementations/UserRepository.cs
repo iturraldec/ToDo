@@ -31,9 +31,9 @@ public class UserRepository : IUserRepository, IUserReads
                     new UserStatus((UserStatusEnum)model.Status)
                 );
   }
-  public async Task<UserResponse?> GetDetailsByIdAsync(string id)
+  public async Task<UserResponse?> GetDetailsByIdAsync(Guid id)
   {
-    var model = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id.ToString() == id);
+    var model = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id);
 
     if (model == null) return null;
 

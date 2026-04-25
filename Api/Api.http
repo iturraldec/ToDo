@@ -5,8 +5,7 @@ GET {{Api_HostAddress}}/users/
 Accept: application/json
 
 ### ver un usuario
-### agregar un usuario
-GET {{Api_HostAddress}}/users/1c95bdcf-9904-4642-b4b2-35e49805174d
+GET {{Api_HostAddress}}/users/827fb15f-a8bb-4645-a045-6b82187a1f24/details
 Accept: application/json
 
 ### agregar un usuario
@@ -30,7 +29,7 @@ Accept: application/json
   "name": "Anakin Skywalker"
 }
 
-###
+### eliminar un usuario
 DELETE {{Api_HostAddress}}/users/1c95bdcf-9904-4642-b4b2-35e49805174d
 Accept: application/json
 

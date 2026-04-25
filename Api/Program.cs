@@ -50,7 +50,8 @@ app.UseHttpsRedirection();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-// Endpoint para probar la inserción del primer usuario
+////////////////////////////////////////////// User - ToDo List API //////////////////////////////////////////////
+// registrar un nuevo usuario
 app.MapPost("/users", async (RegisterUserRequest request, RegisterUserUseCase useCase) =>
 {
   var id = await useCase.Execute(request);
@@ -59,7 +60,7 @@ app.MapPost("/users", async (RegisterUserRequest request, RegisterUserUseCase us
 });
 
 // traer un usuario por su id
-app.MapGet("/users/{id}", async (string id, GetDetailsByIdUserUseCase useCase) => 
+app.MapGet("/users/{id}/details", async (Guid id, GetDetailsByIdUserUseCase useCase) => 
 {
     var user = await useCase.Execute(id);
     
@@ -98,7 +99,15 @@ app.MapPost("/assignments", async (RegisterAssignmentRequest request, RegisterAs
 
   return Results.Created($"/assignments/{id}", new { Id = id });
 });
- 
+
+// traer una tarea por su id
+app.MapGet("/users/{id}", async (Guid id, GetDetailsByIdUserUseCase useCase) => 
+{
+    var user = await useCase.Execute(id);
+    
+    return Results.Ok(user);
+});
+
 //
 app.MapGet("/", () => "API ToDo Lista para pruebas").WithName("GetRoot");
 

@@ -1,9 +1,10 @@
 namespace Application.DTOs;
 
 public record AssignmentResponse(
+    string AssignmentName,
     string Title,
     string Description,
     string Status,
-    string AssignedByName,
-    string AssignedToName
+    DateTime CreatedAt,
+    DateTime DueAt
 );
