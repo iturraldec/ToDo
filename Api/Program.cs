@@ -40,6 +40,7 @@ builder.Services.AddScoped<DeleteUserUseCase>();
 builder.Services.AddScoped<RegisterAssignmentUseCase>();
 builder.Services.AddScoped<GetDetailsByIdAssignmentUseCase>();
 builder.Services.AddScoped<GetAllAssignmentsUseCase>();
+builder.Services.AddScoped<GetByUserIdAssignmentsUseCase>();
 
 var app = builder.Build();
 
@@ -114,6 +115,15 @@ app.MapGet("/assignments/{id}/details", async (Guid id, GetDetailsByIdAssignment
 app.MapGet("/assignments", async (GetAllAssignmentsUseCase useCase) =>
 {
     var assignments = await useCase.Execute();
+
+    return Results.Ok(assignments);
+});
+
+
+// listado de tareas por usuario
+app.MapGet("/assignments/user/{userId}", async (Guid userId, GetByUserIdAssignmentsUseCase useCase) =>
+{
+    var assignments = await useCase.Execute(userId);
 
     return Results.Ok(assignments);
 });

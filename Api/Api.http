@@ -40,8 +40,8 @@ Accept: application/json
 
 {
   "AssignedToId":"827fb15f-a8bb-4645-a045-6b82187a1f24",
-  "title": "Task de demostracion 002",
-  "description": "segundo task",
+  "title": "Task de demostracion 003",
+  "description": "task para probar listado por usuario",
   "dueAt": "2026-05-01"
 }
 
@@ -51,4 +51,8 @@ Accept: application/json
 
 ### listado de tareas
 GET {{Api_HostAddress}}/assignments/
+Accept: application/json
+
+### listado de tareas por usuario
+GET {{Api_HostAddress}}/assignments/user/827fb15f-a8bb-4645-a045-6b82187a1f24
 Accept: application/json
