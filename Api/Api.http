@@ -40,9 +40,9 @@ Accept: application/json
 
 {
   "AssignedToId":"827fb15f-a8bb-4645-a045-6b82187a1f24",
-  "title": "Task de demostracion 003",
-  "description": "task para probar listado por usuario",
-  "dueAt": "2026-05-01"
+  "title": "Task de demostracion-cambio de tipo de dueAt",
+  "description": "dueAt cambio a fecha",
+  "dueAt": "2026-05-04"
 }
 
 ### ver una tarea
