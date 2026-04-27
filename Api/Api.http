@@ -56,3 +56,13 @@ Accept: application/json
 ### listado de tareas por usuario
 GET {{Api_HostAddress}}/assignments/user/827fb15f-a8bb-4645-a045-6b82187a1f24
 Accept: application/json
+
+### cambiar fecha de entrega de una tarea
+PUT {{Api_HostAddress}}/assignments/update-due-date
+Content-Type: application/json
+Accept: application/json
+
+{
+  "AssignmentId": "468c6d12-7532-4980-bb58-3978af4afc0d",
+  "NewDueAt": "2026-11-30"
+}

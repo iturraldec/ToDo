@@ -22,6 +22,8 @@ public class ChangeDueDateUseCase
 
     assignment.ChangeDueDate(new AssignmentDueAt(request.NewDueAt));
 
+    await _repository.ChangeDueDateAsync(assignment, new AssignmentDueAt(request.NewDueAt));
+    
     await _unitOfWork.SaveChangesAsync();
   }
 }

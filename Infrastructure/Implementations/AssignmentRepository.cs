@@ -18,7 +18,22 @@ public class AssignmentRepository : IAssignmentRepository, IAssignmentReads
     _context = context;
     _unitOfWork = unitOfWork;
   }
-  public async Task<AssignmentEntity?> GetByIdAsync(AssignmentId id) => throw new NotImplementedException();
+  public async Task<AssignmentEntity?> GetByIdAsync(AssignmentId id)
+  {
+    var model = await _context.Assignments.AsNoTracking().FirstOrDefaultAsync(a => a.Id == id.Value);
+
+    if (model == null) return null;
+
+    return AssignmentEntity.FromPersistence(
+                    new AssignmentId(model.Id),
+                    new UserId(model.UserId),
+                    new AssignmentTitle(model.Title),
+                    new AssignmentDescription(model.Description),
+                    new AssignmentStatus((AssignmentStatusEnum)model.Status),
+                    new AssignmentCreadtedAt(model.CreatedAt),
+                    new AssignmentDueAt(model.DueAt)
+                );
+  }
   public async Task<AssignmentResponse?> GetDetailsByIdAsync(Guid id)
   {
     var model = await _context.Assignments
@@ -29,6 +44,8 @@ public class AssignmentRepository : IAssignmentRepository, IAssignmentReads
     if(model == null) return null;
 
     return new AssignmentResponse(
+                model.Id.ToString(),
+                model.UserId.ToString(),
                 model.User.Name,
                 model.Title,     
                 model.Description,
@@ -43,12 +60,14 @@ public class AssignmentRepository : IAssignmentRepository, IAssignmentReads
                          .OrderByDescending(a => a.CreatedAt)
                          .AsNoTracking()
                          .Select(model => new AssignmentResponse(
+                            model.Id.ToString(),
+                            model.UserId.ToString(),
                             model.User.Name,
                             model.Title,           
                             model.Description,
                             new AssignmentStatus((AssignmentStatusEnum)model.Status).ToString(),
                             model.CreatedAt,
-                            model.DueAt           
+                            model.DueAt
                         )).ToListAsync();
 
     return modelos.AsReadOnly();
@@ -60,6 +79,8 @@ public class AssignmentRepository : IAssignmentRepository, IAssignmentReads
                          .AsNoTracking()
                          .Where(a => a.UserId == userId)
                          .Select(model => new AssignmentResponse(
+                            model.Id.ToString(),
+                            model.UserId.ToString(),
                             model.User.Name,
                             model.Title,           
                             model.Description,
@@ -88,5 +109,14 @@ public class AssignmentRepository : IAssignmentRepository, IAssignmentReads
   public async Task UpdateAsync(AssignmentEntity assignment)=> throw new NotImplementedException();
   public async Task DeleteAsync(AssignmentEntity entity) => await _context.Assignments.Where(a => a.Id == entity.Id.Value).ExecuteDeleteAsync();
   public async Task ChangeStatusAsync(AssignmentEntity assignment, AssignmentStatusEnum newStatus, UserRolesEnum userRole) => throw new NotImplementedException();
-  public async Task ChangeDueDateAsync(AssignmentEntity assignment, AssignmentDueAt newDueAt) => throw new NotImplementedException();
+  public async Task ChangeDueDateAsync(AssignmentEntity assignment, AssignmentDueAt newDueAt)
+  {
+    var existingModel = await _context.Assignments.FindAsync(assignment.Id.Value);
+    
+    if (existingModel != null)
+    {
+        existingModel.DueAt = newDueAt.Value;
+        existingModel.UpdatedAt = DateTime.Now;
+    }
+  }
 }

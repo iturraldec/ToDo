@@ -40,9 +40,11 @@ builder.Services.AddScoped<ChangeNameUserUseCase>();
 builder.Services.AddScoped<DeleteUserUseCase>();
 
 builder.Services.AddScoped<RegisterAssignmentUseCase>();
+builder.Services.AddScoped<GetByIdAssignmentUseCase>();
 builder.Services.AddScoped<GetDetailsByIdAssignmentUseCase>();
 builder.Services.AddScoped<GetAllAssignmentsUseCase>();
 builder.Services.AddScoped<GetByUserIdAssignmentsUseCase>();
+builder.Services.AddScoped<ChangeDueDateUseCase>();
 
 // arrancamos
 var app = builder.Build();
@@ -131,7 +133,14 @@ app.MapGet("/assignments/user/{userId}", async (Guid userId, GetByUserIdAssignme
     return Results.Ok(assignments);
 });
 
-//
+// cambiar fecha de entrega de una tarea
+app.MapPut("/assignments/update-due-date", async (ChangeDueDateAssignmentRequest request, ChangeDueDateUseCase useCase) =>
+{
+    await useCase.Execute(request);
+    return Results.NoContent();
+});
+
+// endpoint raíz para verificar que la API está corriendo
 app.MapGet("/", () => "API ToDo Lista para pruebas").WithName("GetRoot");
 
 app.Run();

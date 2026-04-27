@@ -50,9 +50,8 @@ public class AssignmentEntity
   }
   // fábrica para crear una asignación desde la persistencia (sin validaciones, asumiendo que los datos ya son válidos)
   public static AssignmentEntity FromPersistence(AssignmentId id, UserId userId, AssignmentTitle title, AssignmentDescription description, 
-                  AssignmentCreadtedAt createdAt, AssignmentDueAt dueAt) 
-                  => new(id, userId, title, description, new AssignmentStatus(AssignmentStatusEnum.Pending), 
-                        createdAt, dueAt);
+                  AssignmentStatus status, AssignmentCreadtedAt createdAt, AssignmentDueAt dueAt) 
+                  => new(id, userId, title, description, status, createdAt, dueAt);
   // método para actualizar el estado de la asignación
   public void ChangeStatus(AssignmentStatusEnum newStatus, UserRolesEnum userRole)
   {

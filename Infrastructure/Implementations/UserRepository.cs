@@ -38,6 +38,7 @@ public class UserRepository : IUserRepository, IUserReads
     if (model == null) return null;
 
     return new UserResponse(
+                model.Id.ToString(),
                 new UserRole((UserRolesEnum)model.Role).ToString(),
                 model.Name,
                 model.Email,
@@ -64,6 +65,7 @@ public class UserRepository : IUserRepository, IUserReads
     var userModels = await _context.Users.OrderBy(u => u.Name).AsNoTracking().ToListAsync();
 
     return userModels.Select(model => new UserResponse(
+                                            model.Id.ToString(),
                                             new UserRole((UserRolesEnum)model.Role).ToString(),
                                             model.Name,
                                             model.Email,
