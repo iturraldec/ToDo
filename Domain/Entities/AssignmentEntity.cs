@@ -31,16 +31,21 @@ public class AssignmentEntity
                   AssignmentTitle title, 
                   AssignmentDescription description, 
                   AssignmentCreadtedAt createdAt, 
-                  AssignmentDueAt dueAt) => 
-                  new(id, 
-                        userId, 
-                        title, 
-                        description, 
-                        new AssignmentStatus(AssignmentStatusEnum.Pending), 
-                        createdAt, 
-                        dueAt
-                        );
+                  AssignmentDueAt dueAt)
+    {
+      var createdDateOnly = DateOnly.FromDateTime(createdAt.Value);
 
+      if (dueAt.Value < createdDateOnly) throw new ArgumentException($"La fecha de vencimiento ({dueAt.Value}) no puede ser anterior a la creación ({createdDateOnly}).");
+
+      return new(id, 
+                userId, 
+                title, 
+                description, 
+                new AssignmentStatus(AssignmentStatusEnum.Pending), 
+                createdAt, 
+                dueAt
+              );
+  }
   // método para actualizar el estado de la asignación
   public void ChangeStatus(AssignmentStatusEnum newStatus, UserRolesEnum userRole)
   {
@@ -74,5 +79,16 @@ public class AssignmentEntity
       }
 
       Status = new AssignmentStatus(newStatus);
+  }
+
+  // cambiar fecha de vencimiento
+  public void ChangeDueDate(AssignmentDueAt newDueAt)
+  {
+    /* if (newDueAt.Value < CreatedAt.Value)
+    {
+        throw new Exception("La nueva fecha de vencimiento no puede ser anterior a la fecha de creación.");
+    } */
+
+    DueAt = newDueAt;
   }
 }

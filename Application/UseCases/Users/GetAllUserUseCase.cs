@@ -6,5 +6,5 @@ public class GetAllUsersUseCase
 {
   private readonly IUserReads _repository;
   public GetAllUsersUseCase(IUserReads repository) => _repository = repository;
-  public async Task<IEnumerable<UserResponse>> Execute() => await _repository.GetAllUsersAsync();
+  public async Task<IReadOnlyList<UserResponse>> Execute() => await _repository.GetAllUsersAsync();
 }

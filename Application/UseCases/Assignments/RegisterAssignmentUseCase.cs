@@ -34,7 +34,7 @@ public class RegisterAssignmentUseCase
                   new AssignmentTitle(request.Title),
                   new AssignmentDescription(request.Description),
                   createAt,
-                  new AssignmentDueAt(request.DueAt, createAt));
+                  new AssignmentDueAt(request.DueAt));
 
     await _repository.RegisterAsync(entity);
     await _unitOfWork.SaveChangesAsync();

@@ -29,15 +29,47 @@ public class AssignmentRepository : IRepository<AssignmentEntity, AssignmentId>,
     if(model == null) return null;
 
     return new AssignmentResponse(
-                model.User.Name,           // AssignmentName
-                model.Title,               // Title
-                model.Description,         // Description
-                new AssignmentStatus((AssignmentStatusEnum)model.Status).ToString(), // Status
-                model.CreatedAt,           // CreatedAt
-                model.DueAt                // DueAt
+                model.User.Name,
+                model.Title,     
+                model.Description,
+                new AssignmentStatus((AssignmentStatusEnum)model.Status).ToString(),
+                model.CreatedAt,
+                model.DueAt
             );
   }
-  public Task<IReadOnlyList<AssignmentResponse>> GetAllAssignmentsAsync() => throw new NotImplementedException();
+  public async Task<IReadOnlyList<AssignmentResponse>> GetAllAssignmentsAsync()
+  {
+    var modelos = await _context.Assignments
+                         .OrderByDescending(a => a.CreatedAt)
+                         .AsNoTracking()
+                         .Select(model => new AssignmentResponse(
+                            model.User.Name,
+                            model.Title,           
+                            model.Description,
+                            new AssignmentStatus((AssignmentStatusEnum)model.Status).ToString(),
+                            model.CreatedAt,
+                            model.DueAt           
+                        )).ToListAsync();
+
+    return modelos.AsReadOnly();
+  }
+  public async Task<IReadOnlyList<AssignmentResponse>> GetByUserIdAssignmentsAsync(Guid userId)
+  {
+    var modelos = await _context.Assignments
+                         .OrderByDescending(a => a.CreatedAt)
+                         .AsNoTracking()
+                         .Where(a => a.UserId == userId)
+                         .Select(model => new AssignmentResponse(
+                            model.User.Name,
+                            model.Title,           
+                            model.Description,
+                            new AssignmentStatus((AssignmentStatusEnum)model.Status).ToString(),
+                            model.CreatedAt,
+                            model.DueAt           
+                        )).ToListAsync();
+
+    return modelos.AsReadOnly();
+  }
   public async Task RegisterAsync(AssignmentEntity assignment)
   {
     var model = new Assignment

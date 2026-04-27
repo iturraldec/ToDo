@@ -6,5 +6,5 @@ public record AssignmentResponse(
     string Description,
     string Status,
     DateTime CreatedAt,
-    DateTime DueAt
+    DateOnly DueAt
 );

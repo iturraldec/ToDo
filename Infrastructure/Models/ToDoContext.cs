@@ -41,9 +41,7 @@ public partial class ToDoContext : DbContext
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("created_at");
             entity.Property(e => e.Description).HasColumnName("description");
-            entity.Property(e => e.DueAt)
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("due_at");
+            entity.Property(e => e.DueAt).HasColumnName("due_at");
             entity.Property(e => e.Status)
                 .HasDefaultValue((short)1)
                 .HasColumnName("status");

@@ -19,7 +19,7 @@ public partial class Assignment
 
     public Guid UserId { get; set; }
 
-    public DateTime DueAt { get; set; }
+    public DateOnly DueAt { get; set; }
 
     public virtual User User { get; set; } = null!;
 }

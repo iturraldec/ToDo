@@ -3,5 +3,5 @@ public record RegisterAssignmentRequest(
   Guid AssignedToId,
   string Title, 
   string Description,
-  DateTime DueAt
+  DateOnly DueAt
 );
