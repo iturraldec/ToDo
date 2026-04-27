@@ -17,19 +17,21 @@ var connectionString = builder.Configuration.GetConnectionString("PostgresConnec
 builder.Services.AddDbContext<ToDoContext>(options =>
     options.UseNpgsql(connectionString));
 
-// 2. Registrar los Repositorios
+// 2. Registrar las implementaciones
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<AssignmentRepository>();
 builder.Services.AddScoped<UnitOfWork>();
 
-builder.Services.AddScoped<IRepository<UserEntity, UserId>>(sp => sp.GetRequiredService<UserRepository>());
+// Registra la interfaz con su implementación concreta
 builder.Services.AddScoped<IUserRepository>(sp => sp.GetRequiredService<UserRepository>());
 builder.Services.AddScoped<IUserReads>(sp => sp.GetRequiredService<UserRepository>());
 
-builder.Services.AddScoped<IRepository<AssignmentEntity, AssignmentId>>(sp => sp.GetRequiredService<AssignmentRepository>());
+builder.Services.AddScoped<IAssignmentRepository>(sp => sp.GetRequiredService<AssignmentRepository>());
 builder.Services.AddScoped<IAssignmentReads>(sp => sp.GetRequiredService<AssignmentRepository>());
+
 builder.Services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<UnitOfWork>());
 
+// casos de uso
 builder.Services.AddScoped<RegisterUserUseCase>();
 builder.Services.AddScoped<GetByIdUserUseCase>();
 builder.Services.AddScoped<GetDetailsByIdUserUseCase>();
@@ -42,6 +44,7 @@ builder.Services.AddScoped<GetDetailsByIdAssignmentUseCase>();
 builder.Services.AddScoped<GetAllAssignmentsUseCase>();
 builder.Services.AddScoped<GetByUserIdAssignmentsUseCase>();
 
+// arrancamos
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

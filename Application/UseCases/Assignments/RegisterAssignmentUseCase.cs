@@ -10,11 +10,11 @@ namespace Application.UseCases.Assignments;
 
 public class RegisterAssignmentUseCase
 {
-  private readonly IRepository<AssignmentEntity, AssignmentId> _repository;
+  private readonly IAssignmentRepository _repository;
   private readonly IUnitOfWork _unitOfWork;
   private readonly IUserReads _userReadService;
 
-  public RegisterAssignmentUseCase(IRepository<AssignmentEntity, AssignmentId> repository, IUnitOfWork unitOfWork, IUserReads userReadService)
+  public RegisterAssignmentUseCase(IAssignmentRepository repository, IUnitOfWork unitOfWork, IUserReads userReadService)
   {
     _repository = repository;
     _unitOfWork = unitOfWork;

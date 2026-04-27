@@ -23,7 +23,11 @@ public class AssignmentEntity
     CreatedAt = createdAt;
     DueAt = dueAt;
   }
-
+  // validar que la fecha de vencimiento no sea anterior a la fecha de creación
+  private static void _ValidateDueDate(AssignmentCreadtedAt createdAt, AssignmentDueAt dueAt)
+  {
+    if (dueAt.Value < DateOnly.FromDateTime(createdAt.Value)) throw new ArgumentException($"La fecha de vencimiento ({dueAt.Value}) no puede ser anterior a la creación ({DateOnly.FromDateTime(createdAt.Value)}).");
+  }
   // fábrica para crear una nueva asignación
   public static AssignmentEntity Create(
                   AssignmentId id, 
@@ -33,9 +37,7 @@ public class AssignmentEntity
                   AssignmentCreadtedAt createdAt, 
                   AssignmentDueAt dueAt)
     {
-      var createdDateOnly = DateOnly.FromDateTime(createdAt.Value);
-
-      if (dueAt.Value < createdDateOnly) throw new ArgumentException($"La fecha de vencimiento ({dueAt.Value}) no puede ser anterior a la creación ({createdDateOnly}).");
+      _ValidateDueDate(createdAt, dueAt);
 
       return new(id, 
                 userId, 
@@ -46,6 +48,11 @@ public class AssignmentEntity
                 dueAt
               );
   }
+  // fábrica para crear una asignación desde la persistencia (sin validaciones, asumiendo que los datos ya son válidos)
+  public static AssignmentEntity FromPersistence(AssignmentId id, UserId userId, AssignmentTitle title, AssignmentDescription description, 
+                  AssignmentCreadtedAt createdAt, AssignmentDueAt dueAt) 
+                  => new(id, userId, title, description, new AssignmentStatus(AssignmentStatusEnum.Pending), 
+                        createdAt, dueAt);
   // método para actualizar el estado de la asignación
   public void ChangeStatus(AssignmentStatusEnum newStatus, UserRolesEnum userRole)
   {
@@ -80,15 +87,10 @@ public class AssignmentEntity
 
       Status = new AssignmentStatus(newStatus);
   }
-
-  // cambiar fecha de vencimiento
+  // cambiar fecha de entrega, validando que no sea anterior a la fecha de creación
   public void ChangeDueDate(AssignmentDueAt newDueAt)
   {
-    /* if (newDueAt.Value < CreatedAt.Value)
-    {
-        throw new Exception("La nueva fecha de vencimiento no puede ser anterior a la fecha de creación.");
-    } */
-
+    _ValidateDueDate(CreatedAt, newDueAt);
     DueAt = newDueAt;
   }
 }

@@ -15,8 +15,8 @@ Accept: application/json
 
 {
   "role":2,
-  "name": "Darth Vader",
-  "email": "dv@ejemplo.com"
+  "name": "Yudy Polgar",
+  "email": "polgar@ejemplo.com"
 }
 
 ### mdificar el nombre de un usuario
@@ -25,8 +25,8 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "id": "1c95bdcf-9904-4642-b4b2-35e49805174d",
-  "name": "Anakin Skywalker"
+  "id": "7cad3f76-b704-4524-a1d9-451a3c087670",
+  "name": "GMI YUDY POLGAR"
 }
 
 ### eliminar un usuario
@@ -40,9 +40,9 @@ Accept: application/json
 
 {
   "AssignedToId":"827fb15f-a8bb-4645-a045-6b82187a1f24",
-  "title": "CAmbio de validacion de dueAt",
-  "description": "dueAt cambio de validacion",
-  "dueAt": "2026-05-10"
+  "title": "Cambio en la interfaz",
+  "description": "mejora en la interfaz de tareas",
+  "dueAt": "2026-05-12"
 }
 
 ### ver una tarea

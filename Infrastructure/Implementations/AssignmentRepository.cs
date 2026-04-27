@@ -9,7 +9,7 @@ using Infrastructure.Models;
 
 namespace Infrastructure.Implementations;
 
-public class AssignmentRepository : IRepository<AssignmentEntity, AssignmentId>, IAssignmentReads
+public class AssignmentRepository : IAssignmentRepository, IAssignmentReads
 {
   private readonly ToDoContext _context;
   private readonly IUnitOfWork _unitOfWork;
@@ -87,4 +87,6 @@ public class AssignmentRepository : IRepository<AssignmentEntity, AssignmentId>,
   }  
   public async Task UpdateAsync(AssignmentEntity assignment)=> throw new NotImplementedException();
   public async Task DeleteAsync(AssignmentEntity entity) => await _context.Assignments.Where(a => a.Id == entity.Id.Value).ExecuteDeleteAsync();
+  public async Task ChangeStatusAsync(AssignmentEntity assignment, AssignmentStatusEnum newStatus, UserRolesEnum userRole) => throw new NotImplementedException();
+  public async Task ChangeDueDateAsync(AssignmentEntity assignment, AssignmentDueAt newDueAt) => throw new NotImplementedException();
 }

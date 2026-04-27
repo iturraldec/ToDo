@@ -10,11 +10,11 @@ namespace Application.UseCases.Users;
 
 public class RegisterUserUseCase
 {
-  private readonly IRepository<UserEntity, UserId> _repository;
+  private readonly IUserRepository _repository;
   private readonly IUserReads _userReadService;
   private readonly IUnitOfWork _unitOfWork;
 
-  public RegisterUserUseCase(IRepository<UserEntity, UserId> repository, IUserReads userReadService, IUnitOfWork unitOfWork)
+  public RegisterUserUseCase(IUserRepository repository, IUserReads userReadService, IUnitOfWork unitOfWork)
   {
     _repository = repository;
     _userReadService = userReadService;
