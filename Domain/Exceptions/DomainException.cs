@@ -12,3 +12,7 @@ public class NotFoundException : DomainException
 {
   public NotFoundException(string message) : base(message) { }
 }
+public class InvalidActionException : DomainException
+{
+    public InvalidActionException(string message) : base(message) { }
+}

@@ -45,6 +45,7 @@ builder.Services.AddScoped<GetDetailsByIdAssignmentUseCase>();
 builder.Services.AddScoped<GetAllAssignmentsUseCase>();
 builder.Services.AddScoped<GetByUserIdAssignmentsUseCase>();
 builder.Services.AddScoped<ChangeDueDateUseCase>();
+builder.Services.AddScoped<ChangeAssignmentStatusUseCase>();
 
 // arrancamos
 var app = builder.Build();
@@ -135,6 +136,13 @@ app.MapGet("/assignments/user/{userId}", async (Guid userId, GetByUserIdAssignme
 
 // cambiar fecha de entrega de una tarea
 app.MapPut("/assignments/update-due-date", async (ChangeDueDateAssignmentRequest request, ChangeDueDateUseCase useCase) =>
+{
+    await useCase.Execute(request);
+    return Results.NoContent();
+});
+
+// cambiar estado de una tarea
+app.MapPut("/assignments/update-status", async (ChangeAssignmentStatusRequest request, ChangeAssignmentStatusUseCase useCase) =>
 {
     await useCase.Execute(request);
     return Results.NoContent();

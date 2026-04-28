@@ -1,4 +1,5 @@
 using Domain.Enums;
+using Domain.Exceptions;
 using Domain.ValueObjects;
 
 namespace Domain.Entities;
@@ -16,7 +17,7 @@ public class AssignmentEntity
   private AssignmentEntity(AssignmentId id, UserId userId, AssignmentTitle title, AssignmentDescription description, AssignmentStatus status, AssignmentCreadtedAt createdAt, AssignmentDueAt dueAt)
   {
     Id = id;
-    AssignmentToId= userId;
+    AssignmentToId = userId;
     Title = title;
     Description = description;
     Status = status;
@@ -53,12 +54,12 @@ public class AssignmentEntity
                   AssignmentStatus status, AssignmentCreadtedAt createdAt, AssignmentDueAt dueAt) 
                   => new(id, userId, title, description, status, createdAt, dueAt);
   // método para actualizar el estado de la asignación
-  public void ChangeStatus(AssignmentStatusEnum newStatus, UserRolesEnum userRole)
+  public void ChangeStatus(AssignmentStatus newStatus, UserRolesEnum userRole)
   {
       bool isAdmin = userRole == UserRolesEnum.Admin;
 
       // "Status" es la propiedad actual de la entidad Tarea
-      bool isValid = (Status.Value, newStatus) switch
+      bool isValid = (Status.Value, newStatus.Value) switch
       {
           // Reglas generales (Cualquier rol)
           (AssignmentStatusEnum.Pending, AssignmentStatusEnum.InProgress) => true,
@@ -70,7 +71,7 @@ public class AssignmentEntity
           (AssignmentStatusEnum.Completed, AssignmentStatusEnum.InProgress) when isAdmin => true,
 
           // No hay cambio (Quedarse en el mismo estado)
-          _ when Status.Value == newStatus => true,
+          _ when Status.Value == newStatus.Value => true,
 
           // Cualquier otro caso es inválido
           _ => false
@@ -78,13 +79,13 @@ public class AssignmentEntity
 
       if (!isValid)
       {
-          throw new Exception(
+          throw new InvalidActionException(
               $"Transición no permitida: {Status} -> {newStatus}. " +
               $"El rol '{userRole}' no tiene permisos para esta acción específica."
           );
       }
 
-      Status = new AssignmentStatus(newStatus);
+      Status = newStatus;
   }
   // cambiar fecha de entrega, validando que no sea anterior a la fecha de creación
   public void ChangeDueDate(AssignmentDueAt newDueAt)

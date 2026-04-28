@@ -108,7 +108,16 @@ public class AssignmentRepository : IAssignmentRepository, IAssignmentReads
   }  
   public async Task UpdateAsync(AssignmentEntity assignment)=> throw new NotImplementedException();
   public async Task DeleteAsync(AssignmentEntity entity) => await _context.Assignments.Where(a => a.Id == entity.Id.Value).ExecuteDeleteAsync();
-  public async Task ChangeStatusAsync(AssignmentEntity assignment, AssignmentStatusEnum newStatus, UserRolesEnum userRole) => throw new NotImplementedException();
+  public async Task ChangeStatusAsync(AssignmentEntity assignment, AssignmentStatus newStatus)
+  {
+    var existingModel = await _context.Assignments.FindAsync(assignment.Id.Value);
+    
+    if (existingModel != null)
+    {
+        existingModel.Status = (short)newStatus.Value;
+        existingModel.UpdatedAt = DateTime.Now;
+    }
+  }
   public async Task ChangeDueDateAsync(AssignmentEntity assignment, AssignmentDueAt newDueAt)
   {
     var existingModel = await _context.Assignments.FindAsync(assignment.Id.Value);

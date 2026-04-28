@@ -1,5 +1,6 @@
 using Application.DTOs;
 using Domain.Entities;
+using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.ValueObjects;
 
@@ -18,7 +19,7 @@ public class ChangeDueDateUseCase
     var assignmentId = new AssignmentId(request.AssignmentId);
     var assignment = await _repository.GetByIdAsync(assignmentId);
 
-    if (assignment is null) throw new Exception("La tarea no existe.");
+    if (assignment is null) throw new NotFoundException("La tarea no existe.");
 
     assignment.ChangeDueDate(new AssignmentDueAt(request.NewDueAt));
 
