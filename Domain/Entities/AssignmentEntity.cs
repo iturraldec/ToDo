@@ -56,36 +56,35 @@ public class AssignmentEntity
   // método para actualizar el estado de la asignación
   public void ChangeStatus(AssignmentStatus newStatus, UserRolesEnum userRole)
   {
-      bool isAdmin = userRole == UserRolesEnum.Admin;
+    if(Status.Value == newStatus.Value) return; // No hay cambio, no se necesita validar
 
-      // "Status" es la propiedad actual de la entidad Tarea
-      bool isValid = (Status.Value, newStatus.Value) switch
-      {
-          // Reglas generales (Cualquier rol)
-          (AssignmentStatusEnum.Pending, AssignmentStatusEnum.InProgress) => true,
-          (AssignmentStatusEnum.InProgress, AssignmentStatusEnum.Completed) => true,
+    bool isAdmin = userRole == UserRolesEnum.Admin;
 
-          // Reglas exclusivas de Administrador
-          (AssignmentStatusEnum.Pending, AssignmentStatusEnum.Archived) when isAdmin => true,
-          (AssignmentStatusEnum.InProgress, AssignmentStatusEnum.Archived) when isAdmin => true,
-          (AssignmentStatusEnum.Completed, AssignmentStatusEnum.InProgress) when isAdmin => true,
+    // "Status" es la propiedad actual de la entidad Tarea
+    bool isValid = (Status.Value, newStatus.Value) switch
+    {
+        // Reglas generales (Cualquier rol)
+        (AssignmentStatusEnum.Pending, AssignmentStatusEnum.InProgress) => true,
+        (AssignmentStatusEnum.InProgress, AssignmentStatusEnum.Completed) => true,
 
-          // No hay cambio (Quedarse en el mismo estado)
-          _ when Status.Value == newStatus.Value => true,
+        // Reglas exclusivas de Administrador
+        (AssignmentStatusEnum.Pending, AssignmentStatusEnum.Archived) when isAdmin => true,
+        (AssignmentStatusEnum.InProgress, AssignmentStatusEnum.Archived) when isAdmin => true,
+        (AssignmentStatusEnum.Completed, AssignmentStatusEnum.InProgress) when isAdmin => true,
 
-          // Cualquier otro caso es inválido
-          _ => false
-      };
+        // Cualquier otro caso es inválido
+        _ => false
+    };
 
-      if (!isValid)
-      {
-          throw new InvalidActionException(
-              $"Transición no permitida: {Status} -> {newStatus}. " +
-              $"El rol '{userRole}' no tiene permisos para esta acción específica."
-          );
-      }
+    if (!isValid)
+    {
+        throw new InvalidActionException(
+            $"Transición no permitida: {Status} -> {newStatus}. " +
+            $"El rol '{userRole}' no tiene permisos para esta acción específica."
+        );
+    }
 
-      Status = newStatus;
+    Status = newStatus;
   }
   // cambiar fecha de entrega, validando que no sea anterior a la fecha de creación
   public void ChangeDueDate(AssignmentDueAt newDueAt)
